@@ -202,6 +202,9 @@ func parseSelfWeight(selfWeightText string) (int64, error) {
 	// String is in the format "2.00 ms" where valid units
 	// that I know about are "s", "ms", "µs", and "ns".
 	// returns nanoseconds.
+	if selfWeightText == "-" {
+		return int64(0), nil;
+	}
 
 	fields := strings.Split(selfWeightText, " ")
 	if len(fields) != 2 {
@@ -219,6 +222,14 @@ func parseSelfWeight(selfWeightText string) (int64, error) {
 	case "µs":
 		value *= 1_000
 	case "ns":
+		value *= 1
+	case "Gc":
+		value *= 1_000_000_000
+	case "Mc":
+		value *= 1_000_000
+	case "Kc":
+		value *= 1_000
+	case "cycles":
 		value *= 1
 	default:
 		return 0, fmt.Errorf("Could not interpret time unit '%s' in %s", selfWeightText, fields[1])
